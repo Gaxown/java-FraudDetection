@@ -1,7 +1,7 @@
 package dao;
 
 import entity.Customer;
-import com.bank.util.DatabaseConnection;
+import util.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package dao;
 
 import entity.FraudAlert;
 import entity.enums.AlertLevel;
-import com.bank.util.DatabaseConnection;
+import util.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
