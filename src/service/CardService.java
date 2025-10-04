@@ -36,11 +36,11 @@ public class CardService {
         return (DebitCard) cardDAO.save(card);
     }
 
-    public CreditCard createCreditCard(int customerId, BigDecimal creditLimit, BigDecimal interestRate) throws SQLException {
+    public CreditCard createCreditCard(int customerId, BigDecimal monthlyLimit, BigDecimal interestRate) throws SQLException {
         String number = generateCardNumber();
         LocalDate expiration = LocalDate.now().plusYears(3);
 
-        CreditCard card = new CreditCard(0, number, expiration, CardStatus.ACTIVE, customerId, creditLimit, interestRate);
+        CreditCard card = new CreditCard(0, number, expiration, CardStatus.ACTIVE, customerId, monthlyLimit, interestRate);
         return (CreditCard) cardDAO.save(card);
     }
 
@@ -97,15 +97,11 @@ public class CardService {
 
         Card card = cardOpt.get();
 
-        if (card instanceof DebitCard debitCard) {
-            return amount.compareTo(debitCard.getDailyLimit()) <= 0;
-        } else if (card instanceof CreditCard creditCard) {
-            return amount.compareTo(creditCard.getCreditLimit()) <= 0;
-        } else if (card instanceof PrepaidCard prepaidCard) {
-            return amount.compareTo(prepaidCard.getBalance()) <= 0;
-        }
-
-        return false;
+        return switch (card) {
+            case DebitCard debitCard -> amount.compareTo(debitCard.getDailyLimit()) <= 0;
+            case CreditCard creditCard -> amount.compareTo(creditCard.getMonthlyLimit()) <= 0;
+            case PrepaidCard prepaidCard -> amount.compareTo(prepaidCard.getAvailableBalance()) <= 0;
+        };
     }
 
     public Optional<Card> findCardById(int cardId) throws SQLException {

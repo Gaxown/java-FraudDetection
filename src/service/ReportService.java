@@ -28,14 +28,14 @@ public class ReportService {
 
         Map<Integer, Long> operationsPerCard = operations.stream()
             .collect(Collectors.groupingBy(
-                CardOperation::getCardId,
+                CardOperation::cardId,
                 Collectors.counting()
             ));
 
         return operationsPerCard.entrySet().stream()
             .sorted(Map.Entry.<Integer, Long>comparingByValue().reversed())
             .limit(5)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public Map<OperationType, BigDecimal> getMonthlyStatistics(YearMonth month) throws SQLException {
@@ -46,10 +46,10 @@ public class ReportService {
 
         return operations.stream()
             .collect(Collectors.groupingBy(
-                CardOperation::getType,
+                CardOperation::operationType,
                 Collectors.reducing(
                     BigDecimal.ZERO,
-                    CardOperation::getAmount,
+                    CardOperation::amount,
                     BigDecimal::add
                 )
             ));
@@ -90,14 +90,14 @@ public class ReportService {
 
         Map<String, Long> operationsByLocation = operations.stream()
             .collect(Collectors.groupingBy(
-                CardOperation::getLocation,
+                CardOperation::location,
                 Collectors.counting()
             ));
 
         return operationsByLocation.entrySet().stream()
             .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
             .limit(10)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public Map<String, BigDecimal> getAverageAmountByCardType() throws SQLException {
@@ -106,7 +106,7 @@ public class ReportService {
 
         Map<Integer, String> cardTypes = cards.stream()
             .collect(Collectors.toMap(
-                Card::getId,
+                Card::getCardId,
                 card -> card.getClass().getSimpleName()
             ));
 

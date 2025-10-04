@@ -3,5 +3,6 @@ package entity.enums;
 public enum OperationType {
     PURCHASE,
     WITHDRAWAL,
-    ONLINE_PAYMENT
+    ONLINE_PAYMENT,
+    TRANSFER
 }

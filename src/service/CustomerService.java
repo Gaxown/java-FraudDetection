@@ -36,7 +36,7 @@ public class CustomerService {
         return customerDAO.findAll();
     }
 
-    public boolean updateCustomer(Customer customer) throws SQLException {
+    public Customer updateCustomer(Customer customer) throws SQLException {
         return customerDAO.update(customer);
     }
 
@@ -45,6 +45,9 @@ public class CustomerService {
     }
 
     public List<Customer> searchCustomersByName(String name) throws SQLException {
-        return customerDAO.searchByName(name);
+        List<Customer> allCustomers = customerDAO.findAll();
+        return allCustomers.stream()
+                .filter(customer -> customer.fullName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
     }
 }

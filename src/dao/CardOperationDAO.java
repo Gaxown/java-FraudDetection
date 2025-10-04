@@ -2,7 +2,7 @@ package dao;
 
 import entity.CardOperation;
 import entity.enums.OperationType;
-import com.bank.util.DatabaseConnection;
+import util.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -165,6 +165,81 @@ public class CardOperationDAO {
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         }
+    }
+
+    // Additional methods needed by services
+    public List<CardOperation> findByType(OperationType type) throws SQLException {
+        return findByOperationType(type);
+    }
+
+    public List<CardOperation> findByLocation(String location) throws SQLException {
+        String sql = "SELECT * FROM CardOperation WHERE location = ? ORDER BY operationDate DESC";
+        List<CardOperation> cardOperations = new ArrayList<>();
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, location);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                cardOperations.add(mapResultSetToCardOperation(rs));
+            }
+        }
+        return cardOperations;
+    }
+
+    public List<CardOperation> findByAmountRange(java.math.BigDecimal minAmount, java.math.BigDecimal maxAmount) throws SQLException {
+        String sql = "SELECT * FROM CardOperation WHERE amount BETWEEN ? AND ? ORDER BY operationDate DESC";
+        List<CardOperation> cardOperations = new ArrayList<>();
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBigDecimal(1, minAmount);
+            stmt.setBigDecimal(2, maxAmount);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                cardOperations.add(mapResultSetToCardOperation(rs));
+            }
+        }
+        return cardOperations;
+    }
+
+    public boolean update(CardOperation operation) throws SQLException {
+        String sql = "UPDATE CardOperation SET operationDate = ?, amount = ?, operationType = ?::operation_type, location = ? WHERE operationId = ?";
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setTimestamp(1, Timestamp.valueOf(operation.getOperationDate()));
+            stmt.setBigDecimal(2, operation.getAmount());
+            stmt.setString(3, operation.getType().name());
+            stmt.setString(4, operation.getLocation());
+            stmt.setInt(5, operation.getOperationId());
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public List<CardOperation> findByCardIdAndDateAfter(int cardId, LocalDateTime date) throws SQLException {
+        String sql = "SELECT * FROM CardOperation WHERE cardId = ? AND operationDate > ? ORDER BY operationDate DESC";
+        List<CardOperation> cardOperations = new ArrayList<>();
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, cardId);
+            stmt.setTimestamp(2, Timestamp.valueOf(date));
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                cardOperations.add(mapResultSetToCardOperation(rs));
+            }
+        }
+        return cardOperations;
+    }
+
+    public List<CardOperation> findByCardIdAndDateRange(int cardId, LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
+        return findByCardAndDateRange(cardId, startDate, endDate);
     }
 
     // Helper method to map ResultSet to CardOperation

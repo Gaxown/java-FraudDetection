@@ -98,6 +98,11 @@ public class FraudAlertDAO {
         return fraudAlerts;
     }
 
+    // Additional method needed by services
+    public List<FraudAlert> findByLevel(AlertLevel level) throws SQLException {
+        return findByAlertLevel(level);
+    }
+
     // Find critical alerts
     public List<FraudAlert> findCriticalAlerts() throws SQLException {
         return findByAlertLevel(AlertLevel.CRITICAL);

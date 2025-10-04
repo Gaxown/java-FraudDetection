@@ -62,14 +62,20 @@ public sealed class Card permits DebitCard, CreditCard, PrepaidCard {
         this.customerId = customerId;
     }
 
+    // Additional getters for compatibility
+    public CardStatus getStatus() {
+        return cardStatus;
+    }
+
+    public void setStatus(CardStatus status) {
+        this.cardStatus = status;
+    }
+
     public CardType getCardType() {
-        if (this instanceof DebitCard) {
-            return CardType.DEBIT;
-        } else if (this instanceof CreditCard) {
-            return CardType.CREDIT;
-        } else if (this instanceof PrepaidCard) {
-            return CardType.PREPAID;
-        }
-        throw new IllegalStateException("Unknown card type");
+        return switch (this) {
+            case DebitCard ignored -> CardType.DEBIT;
+            case CreditCard ignored -> CardType.CREDIT;
+            case PrepaidCard ignored -> CardType.PREPAID;
+        };
     }
 }

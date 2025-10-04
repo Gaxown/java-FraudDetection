@@ -3,7 +3,7 @@ package dao;
 import entity.*;
 import entity.enums.CardStatus;
 import entity.enums.CardType;
-import com.bank.util.DatabaseConnection;
+import util.DatabaseConnection;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -27,17 +27,20 @@ public class CardDAO {
             stmt.setInt(5, card.getCustomerId());
 
             // Set type-specific fields
-            if (card instanceof DebitCard debitCard) {
+            if (card instanceof DebitCard) {
+                DebitCard debitCard = (DebitCard) card;
                 stmt.setBigDecimal(6, debitCard.getDailyLimit());
                 stmt.setNull(7, Types.NUMERIC);
                 stmt.setNull(8, Types.NUMERIC);
                 stmt.setNull(9, Types.NUMERIC);
-            } else if (card instanceof CreditCard creditCard) {
+            } else if (card instanceof CreditCard) {
+                CreditCard creditCard = (CreditCard) card;
                 stmt.setNull(6, Types.NUMERIC);
                 stmt.setBigDecimal(7, creditCard.getMonthlyLimit());
                 stmt.setBigDecimal(8, creditCard.getInterestRate());
                 stmt.setNull(9, Types.NUMERIC);
-            } else if (card instanceof PrepaidCard prepaidCard) {
+            } else if (card instanceof PrepaidCard) {
+                PrepaidCard prepaidCard = (PrepaidCard) card;
                 stmt.setNull(6, Types.NUMERIC);
                 stmt.setNull(7, Types.NUMERIC);
                 stmt.setNull(8, Types.NUMERIC);
@@ -131,17 +134,20 @@ public class CardDAO {
             stmt.setString(3, card.getCardStatus().name());
 
             // Set type-specific fields
-            if (card instanceof DebitCard debitCard) {
+            if (card instanceof DebitCard) {
+                DebitCard debitCard = (DebitCard) card;
                 stmt.setBigDecimal(4, debitCard.getDailyLimit());
                 stmt.setNull(5, Types.NUMERIC);
                 stmt.setNull(6, Types.NUMERIC);
                 stmt.setNull(7, Types.NUMERIC);
-            } else if (card instanceof CreditCard creditCard) {
+            } else if (card instanceof CreditCard) {
+                CreditCard creditCard = (CreditCard) card;
                 stmt.setNull(4, Types.NUMERIC);
                 stmt.setBigDecimal(5, creditCard.getMonthlyLimit());
                 stmt.setBigDecimal(6, creditCard.getInterestRate());
                 stmt.setNull(7, Types.NUMERIC);
-            } else if (card instanceof PrepaidCard prepaidCard) {
+            } else if (card instanceof PrepaidCard) {
+                PrepaidCard prepaidCard = (PrepaidCard) card;
                 stmt.setNull(4, Types.NUMERIC);
                 stmt.setNull(5, Types.NUMERIC);
                 stmt.setNull(6, Types.NUMERIC);

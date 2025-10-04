@@ -11,4 +11,29 @@ public record CardOperation(
     OperationType operationType,
     String location,
     int cardId
-) {}
+) {
+    // Convenience methods for backward compatibility
+    public OperationType getType() {
+        return operationType;
+    }
+
+    public int getOperationId() {
+        return operationId;
+    }
+
+    public LocalDateTime getOperationDate() {
+        return operationDate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public int getCardId() {
+        return cardId;
+    }
+}
