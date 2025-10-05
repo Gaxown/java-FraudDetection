@@ -12,7 +12,6 @@ public record CardOperation(
     String location,
     int cardId
 ) {
-    // Convenience methods for backward compatibility
     public OperationType getType() {
         return operationType;
     }

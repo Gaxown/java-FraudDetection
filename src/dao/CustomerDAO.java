@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public class CustomerDAO {
 
-    // Create
     public Customer save(Customer customer) throws SQLException {
         String sql = "INSERT INTO Customer (fullName, email, phoneNumber) VALUES (?, ?, ?) RETURNING customerId";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -29,7 +28,6 @@ public class CustomerDAO {
         }
     }
 
-    // Read by ID
     public Optional<Customer> findById(int customerId) throws SQLException {
         String sql = "SELECT * FROM Customer WHERE customerId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -45,7 +43,6 @@ public class CustomerDAO {
         }
     }
 
-    // Read all
     public List<Customer> findAll() throws SQLException {
         String sql = "SELECT * FROM Customer ORDER BY fullName";
         List<Customer> customers = new ArrayList<>();
@@ -61,7 +58,6 @@ public class CustomerDAO {
         return customers;
     }
 
-    // Find by email
     public Optional<Customer> findByEmail(String email) throws SQLException {
         String sql = "SELECT * FROM Customer WHERE email = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -77,7 +73,6 @@ public class CustomerDAO {
         }
     }
 
-    // Find by phone number
     public Optional<Customer> findByPhoneNumber(String phoneNumber) throws SQLException {
         String sql = "SELECT * FROM Customer WHERE phoneNumber = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -93,7 +88,6 @@ public class CustomerDAO {
         }
     }
 
-    // Update
     public Customer update(Customer customer) throws SQLException {
         String sql = "UPDATE Customer SET fullName = ?, email = ?, phoneNumber = ? WHERE customerId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -112,7 +106,6 @@ public class CustomerDAO {
         }
     }
 
-    // Delete
     public boolean delete(int customerId) throws SQLException {
         String sql = "DELETE FROM Customer WHERE customerId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -124,7 +117,6 @@ public class CustomerDAO {
         }
     }
 
-    // Helper method to map ResultSet to Customer
     private Customer mapResultSetToCustomer(ResultSet rs) throws SQLException {
         return new Customer(
             rs.getInt("customerId"),

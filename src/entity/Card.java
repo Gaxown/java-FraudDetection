@@ -20,7 +20,6 @@ public sealed class Card permits DebitCard, CreditCard, PrepaidCard {
         this.customerId = customerId;
     }
 
-    // Getters
     public int getCardId() {
         return cardId;
     }
@@ -41,7 +40,6 @@ public sealed class Card permits DebitCard, CreditCard, PrepaidCard {
         return customerId;
     }
 
-    // Setters
     public void setCardId(int cardId) {
         this.cardId = cardId;
     }
@@ -62,7 +60,6 @@ public sealed class Card permits DebitCard, CreditCard, PrepaidCard {
         this.customerId = customerId;
     }
 
-    // Additional getters for compatibility
     public CardStatus getStatus() {
         return cardStatus;
     }
@@ -72,10 +69,14 @@ public sealed class Card permits DebitCard, CreditCard, PrepaidCard {
     }
 
     public CardType getCardType() {
-        return switch (this) {
-            case DebitCard ignored -> CardType.DEBIT;
-            case CreditCard ignored -> CardType.CREDIT;
-            case PrepaidCard ignored -> CardType.PREPAID;
-        };
+        if (this instanceof DebitCard) {
+            return CardType.DEBIT;
+        } else if (this instanceof CreditCard) {
+            return CardType.CREDIT;
+        } else if (this instanceof PrepaidCard) {
+            return CardType.PREPAID;
+        } else {
+            throw new IllegalStateException("Unknown card type: " + this.getClass().getSimpleName());
+        }
     }
 }

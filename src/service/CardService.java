@@ -97,11 +97,18 @@ public class CardService {
 
         Card card = cardOpt.get();
 
-        return switch (card) {
-            case DebitCard debitCard -> amount.compareTo(debitCard.getDailyLimit()) <= 0;
-            case CreditCard creditCard -> amount.compareTo(creditCard.getMonthlyLimit()) <= 0;
-            case PrepaidCard prepaidCard -> amount.compareTo(prepaidCard.getAvailableBalance()) <= 0;
-        };
+        if (card instanceof DebitCard) {
+            DebitCard debitCard = (DebitCard) card;
+            return amount.compareTo(debitCard.getDailyLimit()) <= 0;
+        } else if (card instanceof CreditCard) {
+            CreditCard creditCard = (CreditCard) card;
+            return amount.compareTo(creditCard.getMonthlyLimit()) <= 0;
+        } else if (card instanceof PrepaidCard) {
+            PrepaidCard prepaidCard = (PrepaidCard) card;
+            return amount.compareTo(prepaidCard.getAvailableBalance()) <= 0;
+        } else {
+            return false;
+        }
     }
 
     public Optional<Card> findCardById(int cardId) throws SQLException {

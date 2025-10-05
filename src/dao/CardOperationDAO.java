@@ -12,7 +12,6 @@ import java.util.Optional;
 
 public class CardOperationDAO {
 
-    // Create
     public CardOperation save(CardOperation cardOperation) throws SQLException {
         String sql = "INSERT INTO CardOperation (operationDate, amount, operationType, location, cardId) VALUES (?, ?, ?::operation_type, ?, ?) RETURNING operationId";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -34,7 +33,6 @@ public class CardOperationDAO {
         }
     }
 
-    // Read by ID
     public Optional<CardOperation> findById(int operationId) throws SQLException {
         String sql = "SELECT * FROM CardOperation WHERE operationId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -50,7 +48,6 @@ public class CardOperationDAO {
         }
     }
 
-    // Read all
     public List<CardOperation> findAll() throws SQLException {
         String sql = "SELECT * FROM CardOperation ORDER BY operationDate DESC";
         List<CardOperation> cardOperations = new ArrayList<>();
@@ -66,7 +63,6 @@ public class CardOperationDAO {
         return cardOperations;
     }
 
-    // Find by card ID
     public List<CardOperation> findByCardId(int cardId) throws SQLException {
         String sql = "SELECT * FROM CardOperation WHERE cardId = ? ORDER BY operationDate DESC";
         List<CardOperation> cardOperations = new ArrayList<>();
@@ -83,7 +79,6 @@ public class CardOperationDAO {
         return cardOperations;
     }
 
-    // Find by operation type
     public List<CardOperation> findByOperationType(OperationType operationType) throws SQLException {
         String sql = "SELECT * FROM CardOperation WHERE operationType = ?::operation_type ORDER BY operationDate DESC";
         List<CardOperation> cardOperations = new ArrayList<>();
@@ -100,7 +95,6 @@ public class CardOperationDAO {
         return cardOperations;
     }
 
-    // Find by date range
     public List<CardOperation> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
         String sql = "SELECT * FROM CardOperation WHERE operationDate BETWEEN ? AND ? ORDER BY operationDate DESC";
         List<CardOperation> cardOperations = new ArrayList<>();
@@ -118,7 +112,6 @@ public class CardOperationDAO {
         return cardOperations;
     }
 
-    // Find by card and date range
     public List<CardOperation> findByCardAndDateRange(int cardId, LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
         String sql = "SELECT * FROM CardOperation WHERE cardId = ? AND operationDate BETWEEN ? AND ? ORDER BY operationDate DESC";
         List<CardOperation> cardOperations = new ArrayList<>();
@@ -137,7 +130,6 @@ public class CardOperationDAO {
         return cardOperations;
     }
 
-    // Find recent operations for a card (last N operations)
     public List<CardOperation> findRecentOperationsByCard(int cardId, int limit) throws SQLException {
         String sql = "SELECT * FROM CardOperation WHERE cardId = ? ORDER BY operationDate DESC LIMIT ?";
         List<CardOperation> cardOperations = new ArrayList<>();
@@ -155,7 +147,6 @@ public class CardOperationDAO {
         return cardOperations;
     }
 
-    // Delete
     public boolean delete(int operationId) throws SQLException {
         String sql = "DELETE FROM CardOperation WHERE operationId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -167,7 +158,6 @@ public class CardOperationDAO {
         }
     }
 
-    // Additional methods needed by services
     public List<CardOperation> findByType(OperationType type) throws SQLException {
         return findByOperationType(type);
     }
@@ -242,7 +232,6 @@ public class CardOperationDAO {
         return findByCardAndDateRange(cardId, startDate, endDate);
     }
 
-    // Helper method to map ResultSet to CardOperation
     private CardOperation mapResultSetToCardOperation(ResultSet rs) throws SQLException {
         return new CardOperation(
             rs.getInt("operationId"),

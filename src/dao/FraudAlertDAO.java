@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public class FraudAlertDAO {
 
-    // Create
     public FraudAlert save(FraudAlert fraudAlert) throws SQLException {
         String sql = "INSERT INTO FraudAlert (description, alertLevel, cardId, creationDate) VALUES (?, ?::alert_level, ?, ?) RETURNING alertId";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -32,7 +31,6 @@ public class FraudAlertDAO {
         }
     }
 
-    // Read by ID
     public Optional<FraudAlert> findById(int alertId) throws SQLException {
         String sql = "SELECT * FROM FraudAlert WHERE alertId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -48,7 +46,6 @@ public class FraudAlertDAO {
         }
     }
 
-    // Read all
     public List<FraudAlert> findAll() throws SQLException {
         String sql = "SELECT * FROM FraudAlert ORDER BY creationDate DESC";
         List<FraudAlert> fraudAlerts = new ArrayList<>();
@@ -64,7 +61,6 @@ public class FraudAlertDAO {
         return fraudAlerts;
     }
 
-    // Find by card ID
     public List<FraudAlert> findByCardId(int cardId) throws SQLException {
         String sql = "SELECT * FROM FraudAlert WHERE cardId = ? ORDER BY creationDate DESC";
         List<FraudAlert> fraudAlerts = new ArrayList<>();
@@ -81,7 +77,6 @@ public class FraudAlertDAO {
         return fraudAlerts;
     }
 
-    // Find by alert level
     public List<FraudAlert> findByAlertLevel(AlertLevel alertLevel) throws SQLException {
         String sql = "SELECT * FROM FraudAlert WHERE alertLevel = ?::alert_level ORDER BY creationDate DESC";
         List<FraudAlert> fraudAlerts = new ArrayList<>();
@@ -98,17 +93,14 @@ public class FraudAlertDAO {
         return fraudAlerts;
     }
 
-    // Additional method needed by services
     public List<FraudAlert> findByLevel(AlertLevel level) throws SQLException {
         return findByAlertLevel(level);
     }
 
-    // Find critical alerts
     public List<FraudAlert> findCriticalAlerts() throws SQLException {
         return findByAlertLevel(AlertLevel.CRITICAL);
     }
 
-    // Delete
     public boolean delete(int alertId) throws SQLException {
         String sql = "DELETE FROM FraudAlert WHERE alertId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -120,7 +112,6 @@ public class FraudAlertDAO {
         }
     }
 
-    // Helper method to map ResultSet to FraudAlert
     private FraudAlert mapResultSetToFraudAlert(ResultSet rs) throws SQLException {
         return new FraudAlert(
             rs.getInt("alertId"),

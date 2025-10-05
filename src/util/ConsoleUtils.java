@@ -91,4 +91,20 @@ public class ConsoleUtils {
             System.out.println();
         }
     }
+
+    public static void printSuccess(String message) {
+        System.out.println("\u001B[32m" + message + "\u001B[0m"); // Green text
+    }
+
+    public static void printError(String message) {
+        System.out.println("\u001B[31m" + message + "\u001B[0m"); // Red text
+    }
+
+    public static void printWarning(String message) {
+        System.out.println("\u001B[33m" + message + "\u001B[0m"); // Yellow text
+    }
+
+    public static void printInfo(String message) {
+        System.out.println("\u001B[34m" + message + "\u001B[0m"); // Blue text
+    }
 }

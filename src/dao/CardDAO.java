@@ -14,7 +14,6 @@ import java.util.Optional;
 
 public class CardDAO {
 
-    // Create
     public Card save(Card card) throws SQLException {
         String sql = "INSERT INTO Card (cardNumber, expirationDate, cardStatus, cardType, customerId, dailyLimit, monthlyLimit, interestRate, availableBalance) VALUES (?, ?, ?::card_status, ?::card_type, ?, ?, ?, ?, ?) RETURNING cardId";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -26,7 +25,6 @@ public class CardDAO {
             stmt.setString(4, card.getCardType().name());
             stmt.setInt(5, card.getCustomerId());
 
-            // Set type-specific fields
             if (card instanceof DebitCard) {
                 DebitCard debitCard = (DebitCard) card;
                 stmt.setBigDecimal(6, debitCard.getDailyLimit());
@@ -57,7 +55,6 @@ public class CardDAO {
         }
     }
 
-    // Read by ID
     public Optional<Card> findById(int cardId) throws SQLException {
         String sql = "SELECT * FROM Card WHERE cardId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -73,7 +70,6 @@ public class CardDAO {
         }
     }
 
-    // Read all
     public List<Card> findAll() throws SQLException {
         String sql = "SELECT * FROM Card ORDER BY cardNumber";
         List<Card> cards = new ArrayList<>();
@@ -89,7 +85,6 @@ public class CardDAO {
         return cards;
     }
 
-    // Find by customer ID
     public List<Card> findByCustomerId(int customerId) throws SQLException {
         String sql = "SELECT * FROM Card WHERE customerId = ?";
         List<Card> cards = new ArrayList<>();
@@ -106,7 +101,6 @@ public class CardDAO {
         return cards;
     }
 
-    // Find by card status
     public List<Card> findByCardStatus(CardStatus cardStatus) throws SQLException {
         String sql = "SELECT * FROM Card WHERE cardStatus = ?::card_status";
         List<Card> cards = new ArrayList<>();
@@ -123,7 +117,6 @@ public class CardDAO {
         return cards;
     }
 
-    // Update
     public boolean update(Card card) throws SQLException {
         String sql = "UPDATE Card SET cardNumber = ?, expirationDate = ?, cardStatus = ?::card_status, dailyLimit = ?, monthlyLimit = ?, interestRate = ?, availableBalance = ? WHERE cardId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -133,7 +126,6 @@ public class CardDAO {
             stmt.setDate(2, Date.valueOf(card.getExpirationDate()));
             stmt.setString(3, card.getCardStatus().name());
 
-            // Set type-specific fields
             if (card instanceof DebitCard) {
                 DebitCard debitCard = (DebitCard) card;
                 stmt.setBigDecimal(4, debitCard.getDailyLimit());
@@ -161,7 +153,6 @@ public class CardDAO {
         }
     }
 
-    // Delete
     public boolean delete(int cardId) throws SQLException {
         String sql = "DELETE FROM Card WHERE cardId = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -173,7 +164,6 @@ public class CardDAO {
         }
     }
 
-    // Helper method to map ResultSet to Card
     private Card mapResultSetToCard(ResultSet rs) throws SQLException {
         int cardId = rs.getInt("cardId");
         String cardNumber = rs.getString("cardNumber");
@@ -182,20 +172,24 @@ public class CardDAO {
         CardType cardType = CardType.valueOf(rs.getString("cardType"));
         int customerId = rs.getInt("customerId");
 
-        return switch (cardType) {
-            case DEBIT -> new DebitCard(
+        if (cardType == CardType.DEBIT) {
+            return new DebitCard(
                 cardId, cardNumber, expirationDate, cardStatus, customerId,
                 rs.getBigDecimal("dailyLimit")
             );
-            case CREDIT -> new CreditCard(
+        } else if (cardType == CardType.CREDIT) {
+            return new CreditCard(
                 cardId, cardNumber, expirationDate, cardStatus, customerId,
                 rs.getBigDecimal("monthlyLimit"),
                 rs.getBigDecimal("interestRate")
             );
-            case PREPAID -> new PrepaidCard(
+        } else if (cardType == CardType.PREPAID) {
+            return new PrepaidCard(
                 cardId, cardNumber, expirationDate, cardStatus, customerId,
                 rs.getBigDecimal("availableBalance")
             );
-        };
+        } else {
+            throw new IllegalArgumentException("Unknown card type: " + cardType);
+        }
     }
 }

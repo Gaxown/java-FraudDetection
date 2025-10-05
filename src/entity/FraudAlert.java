@@ -10,7 +10,6 @@ public record FraudAlert(
     int cardId,
     LocalDateTime creationDate
 ) {
-    // Convenience methods for backward compatibility
     public int getAlertId() {
         return alertId;
     }
